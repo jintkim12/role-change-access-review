@@ -1,0 +1,40 @@
+{
+  "snapshot": "2026-11-24",
+  "dataset": "Synthetic portfolio scenario",
+  "entitlements": {
+    "case-edit": "Edit support cases",
+    "case-report": "View case reporting",
+    "kb-publish": "Publish knowledge articles",
+    "refund-approve": "Approve refunds",
+    "payout-export": "Export payout batches",
+    "billing-view": "View billing history",
+    "staff-coach": "View coaching records"
+  },
+  "roles": {
+    "Support specialist": {"required": ["case-edit", "billing-view"], "optional": ["case-report"]},
+    "Support lead": {"required": ["case-edit", "case-report", "staff-coach"], "optional": ["kb-publish", "billing-view"]},
+    "Billing analyst": {"required": ["billing-view", "payout-export"], "optional": ["case-report"]},
+    "Refund approver": {"required": ["billing-view", "refund-approve"], "optional": []}
+  },
+  "groups": {
+    "queue-east": {"inherits": ["support-base"], "grants": []},
+    "support-base": {"inherits": ["case-workers", "billing-readers"], "grants": []},
+    "case-workers": {"inherits": [], "grants": ["case-edit"]},
+    "billing-readers": {"inherits": [], "grants": ["billing-view"]},
+    "lead-desk": {"inherits": ["support-base", "reporting"], "grants": ["staff-coach"]},
+    "reporting": {"inherits": [], "grants": ["case-report"]},
+    "billing-team": {"inherits": ["billing-readers"], "grants": ["payout-export"]},
+    "refund-crew": {"inherits": ["billing-readers"], "grants": ["refund-approve"]},
+    "writers": {"inherits": [], "grants": ["kb-publish"]}
+  },
+  "changes": [
+    {"person": "Mira Vale", "case": "MOVE-101", "from": "Billing analyst", "to": "Support specialist", "effective": "2026-11-12", "groups": ["queue-east", "billing-team"]},
+    {"person": "Theo Reed", "case": "MOVE-102", "from": "Support lead", "to": "Billing analyst", "effective": "2026-11-17", "groups": ["billing-team", "reporting", "case-workers"]},
+    {"person": "Ari Bell", "case": "MOVE-103", "from": "Refund approver", "to": "Support lead", "effective": "2026-11-20", "groups": ["queue-east", "reporting", "refund-crew"]},
+    {"person": "Noor Lane", "case": "MOVE-104", "from": "Support specialist", "to": "Support lead", "effective": "2026-11-23", "groups": ["lead-desk", "writers"]}
+  ],
+  "exceptions": [
+    {"case": "MOVE-101", "access": "payout-export", "start": "2026-11-12", "end_exclusive": "2026-11-24", "reference": "EX-018", "owner": "Finance operations", "purpose": "Finish the November payout handoff."},
+    {"case": "MOVE-102", "access": "case-edit", "start": "2026-11-24", "end_exclusive": "2026-12-01", "reference": "EX-021", "owner": "Service desk manager", "purpose": "Close assigned cases during the team transfer."}
+  ]
+}
