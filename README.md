@@ -17,6 +17,12 @@ The four transfers produce 17 entitlement decisions. Two permissions need an exc
 
 ## Reproduce
 
+### Reconcile Microsoft Graph-shaped memberships
+
+Run `python -B graph_reconcile.py` to compare two representations of the same synthetic directory. The [offline fixture](graph-members.sample.json) contains a counted, single-page member response for each of nine security groups. Four user IDs map to HR transfer cases. The adapter rebuilds direct memberships from IDs and object types, including nested group edges. Role definitions, entitlement grants and exception dates come from the separate policy file. All **17 review rows** match, including their granting paths and policy reasons.
+
+Microsoft Graph lists a group's direct members. A nested group therefore belongs to the group whose response contains its ID. The fixture uses `id` and `@odata.type` so display names can be missing or duplicated. The adapter requires every mapped group and case, rejects unsupported object types or unknown IDs, and stops when a response has a next-page link or an inconsistent count. This exercise covers a closed synthetic set of users and security groups. It requires no tenant or credentials. [List group members](https://learn.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0) · [Microsoft Graph paging](https://learn.microsoft.com/en-us/graph/paging)
+
 ### Can the reviewer close the findings?
 
 Run `python -B follow_up.py` to replay a proposed change in memory. On November 25 the sample drops the former billing-team membership in MOVE-101 and replaces the former refund-team membership with lead-desk access in MOVE-103. The model then recomputes **every** effective grant, including inherited grants.
